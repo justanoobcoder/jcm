@@ -9,11 +9,15 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 if [[ -f "$SCRIPT_DIR/jcm-daemon" ]]; then
     BASE_DIR="$SCRIPT_DIR"
     QML_PATH="$BASE_DIR/shell.qml"
-# 2. Check if the project is in the standard config location
+# 2. Check if the project is in the standard user config location
 elif [[ -f "$CONFIG_DIR/shell.qml" ]]; then
     BASE_DIR="$CONFIG_DIR"
     QML_PATH="$BASE_DIR/shell.qml"
-# 3. Fallback to current directory (least preferred)
+# 3. Check standard system installation path
+elif [[ -f "/usr/share/jcm/shell.qml" ]]; then
+    BASE_DIR="/usr/share/jcm"
+    QML_PATH="$BASE_DIR/shell.qml"
+# 4. Fallback to current directory (least preferred)
 else
     BASE_DIR="$(pwd)"
     QML_PATH="./shell.qml"

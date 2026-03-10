@@ -45,20 +45,18 @@ To run JCM, you need the following tools installed on your system:
    ```
    *The script will automatically spawn the background daemon if it's not already running.*
 
-3. **Background Daemon (Systemd)**:
-   If you want the watcher to start automatically on login (non-NixOS), follow these steps:
-
+3. **System-wide Installation (Optional)**:
+   To install JCM globally so you can launch it from anywhere, run:
    ```bash
-   # Create the user-level systemd directory if it doesn't exist
-   mkdir -p ~/.config/systemd/user
-
-   # Copy the service file
-   cp jcm.service ~/.config/systemd/user/
-
-   # Enable and start the service
-   systemctl --user enable --now jcm.service
+   sudo make install
    ```
-   *Note: This ensures the daemon is always watching your clipboard, even if the UI is closed.*
+   This will place the executables in `/usr/bin/` and the QML files in `/usr/share/jcm/`.
+
+4. **Autostart the Daemon**:
+   JCM runs a background watcher. To ensure it captures your clipboard continuously, add the following command to your Desktop Environment's autostart script (like `~/.config/sway/config` or `~/.config/hypr/hyprland.conf`):
+   ```bash
+   jcm-daemon watch &
+   ```
 
 ---
 
