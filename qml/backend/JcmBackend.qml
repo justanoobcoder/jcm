@@ -8,6 +8,7 @@ Item {
     property bool isDarkMode: false
     property bool isAutoDelete: false
     property bool isPasteRightAway: false
+    property bool isPaused: false
     property string typeFilter: "all"
     
     // Model reference passed from UI
@@ -38,6 +39,15 @@ Item {
         running: true
         stdout: SplitParser {
             onRead: data => { backendRoot.isPasteRightAway = (data.trim() === "true") }
+        }
+    }
+
+    Process {
+        id: initPauseState
+        command: ["jcm-daemon", "config", "get", "is_paused"]
+        running: true
+        stdout: SplitParser {
+            onRead: data => { backendRoot.isPaused = (data.trim() === "true") }
         }
     }
 
@@ -179,6 +189,12 @@ Item {
         silentProc.command = ["jcm-daemon", "config", "set", "paste_right_away", val ? "true" : "false"]
         silentProc.running = true
     }
+    
+    function setPaused(val) {
+        backendRoot.isPaused = val
+        silentProc.command = ["jcm-daemon", "config", "set", "is_paused", val ? "true" : "false"]
+        silentProc.running = true
+    }
 
     property alias refreshTimer: refreshTimer
     Timer {
@@ -202,5 +218,6 @@ Item {
         initTheme.running = false
         initAutoDelete.running = false
         initPaste.running = false
+        initPauseState.running = false
     }
 }

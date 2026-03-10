@@ -67,6 +67,10 @@ def store():
     except Exception as e:
         log(f"Error consuming stdin: {e}")
 
+    if get_setting('is_paused', 'false') == 'true':
+        log("Recording paused, ignoring")
+        return
+
     try:
         types_out = subprocess.check_output(['wl-paste', '--list-types'], stderr=subprocess.DEVNULL).decode().splitlines()
         log(f"Types: {types_out}")

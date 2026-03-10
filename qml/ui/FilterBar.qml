@@ -11,9 +11,11 @@ RowLayout {
     property color cardHover: "#f5f5f5"
     property color accentColor: "#0067c0"
     property bool isDarkMode: false
+    property bool isPaused: false
     
     // Callbacks to interact with backend/UI
     signal filterActivated(string filterType)
+    signal pauseToggled(bool value)
     signal clearAllRequested()
 
     ComboBox {
@@ -96,6 +98,33 @@ RowLayout {
     }
 
     Item { Layout.fillWidth: true }
+
+    Button {
+        flat: true
+        Layout.preferredHeight: 28
+        contentItem: Text {
+            text: filterBarRoot.isPaused ? "▶ Resume" : "⏸ Pause"
+            font.pixelSize: 12
+            color: pauseBtnMouse.containsMouse ? filterBarRoot.accentColor : filterBarRoot.fgColor
+            opacity: pauseBtnMouse.containsMouse ? 1.0 : 0.6
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+        }
+        background: Rectangle {
+            radius: 4
+            color: pauseBtnMouse.containsMouse ? (filterBarRoot.isDarkMode ? "#333" : "#eee") : "transparent"
+            border.color: pauseBtnMouse.containsMouse ? "#ddd" : "transparent"
+        }
+        MouseArea {
+            id: pauseBtnMouse
+            anchors.fill: parent
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
+            onClicked: {
+                filterBarRoot.pauseToggled(!filterBarRoot.isPaused)
+            }
+        }
+    }
 
     Button {
         flat: true

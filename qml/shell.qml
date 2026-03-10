@@ -98,6 +98,7 @@ ShellRoot {
 
                 FilterBar {
                     isDarkMode: backend.isDarkMode
+                    isPaused: backend.isPaused
                     fgColor: mainWindow.fgColor
                     cardColor: mainWindow.cardColor
                     cardHover: mainWindow.cardHover
@@ -106,6 +107,10 @@ ShellRoot {
                     onFilterActivated: type => {
                         backend.typeFilter = type
                         backend.loadData()
+                    }
+                    
+                    onPauseToggled: val => {
+                        backend.setPaused(val)
                     }
                     
                     onClearAllRequested: {
