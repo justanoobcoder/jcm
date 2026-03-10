@@ -18,6 +18,7 @@ A modern, aesthetic, and lightweight clipboard manager for **Wayland**, built wi
 - **Image Support**: Captures and previews images with aspect-ratio awareness.
 - **Persistence**: Powered by SQLite for reliable history storage.
 - **Filtering & Search**: Quickly find clips by text content or category (All, Text, Image, Color, Link).
+- **Pause/Resume**: Pause and resume clipboard history record
 - **Auto-Cleanup**: Optional "Auto-delete on reboot" to keep your daily history fresh while preserving your **pinned** items.
 
 ## 🛠️ Dependencies
