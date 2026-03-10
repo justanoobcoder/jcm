@@ -96,115 +96,20 @@ ShellRoot {
                     onSettingsClicked: settingsDrawer.visible = true
                 }
 
-                RowLayout {
-                    Layout.fillWidth: true
-
-                    ComboBox {
-                        id: typeFilterBox
-                        model: ["All", "Text", "Image", "Color", "Link"]
-                        currentIndex: 0
-                        Layout.preferredWidth: 100
-                        Layout.preferredHeight: 32
-
-                        onActivated: (index) => {
-                            if (index === 0) backend.typeFilter = "all"
-                            else if (index === 1) backend.typeFilter = "text"
-                            else if (index === 2) backend.typeFilter = "image"
-                            else if (index === 3) backend.typeFilter = "color"
-                            else if (index === 4) backend.typeFilter = "link"
-                            backend.loadData()
-                        }
-
-                        contentItem: Text {
-                            text: typeFilterBox.displayText
-                            color: mainWindow.fgColor
-                            font.pixelSize: 13
-                            font.bold: true
-                            verticalAlignment: Text.AlignVCenter
-                            leftPadding: 12
-                        }
-                        indicator: Text {
-                            x: typeFilterBox.width - width - 8
-                            y: typeFilterBox.topPadding + (typeFilterBox.availableHeight - height) / 2
-                            text: "▾"
-                            color: mainWindow.fgColor
-                            font.pixelSize: 14
-                        }
-                        background: Rectangle {
-                            color: typeFilterBox.hovered ? (backend.isDarkMode ? "#333" : "#e6e6e6") : (backend.isDarkMode ? "#222" : "#f5f5f5")
-                            radius: 6
-                            border.color: typeFilterBox.hovered ? mainWindow.accentColor : (backend.isDarkMode ? "#444" : "#ccc")
-                            border.width: 1
-                            
-                            MouseArea {
-                                anchors.fill: parent
-                                acceptedButtons: Qt.NoButton
-                                cursorShape: Qt.PointingHandCursor
-                            }
-                        }
-                        popup: Popup {
-                            y: typeFilterBox.height + 4
-                            width: typeFilterBox.width
-                            padding: 4
-                            background: Rectangle {
-                                color: mainWindow.cardColor
-                                border.color: backend.isDarkMode ? "#333" : "#ddd"
-                                radius: 8
-                            }
-                            contentItem: ListView {
-                                implicitHeight: contentHeight
-                                model: typeFilterBox.delegateModel
-                                clip: true
-                            }
-                        }
-                        delegate: ItemDelegate {
-                            width: typeFilterBox.width - 8
-                            height: 32
-                            contentItem: Text {
-                                text: modelData
-                                color: mainWindow.fgColor
-                                font.pixelSize: 13
-                                verticalAlignment: Text.AlignVCenter
-                            }
-                            background: Rectangle {
-                                color: parent.hovered ? mainWindow.cardHover : "transparent"
-                                radius: 4
-                            }
-                            MouseArea {
-                                anchors.fill: parent
-                                acceptedButtons: Qt.NoButton
-                                cursorShape: Qt.PointingHandCursor
-                            }
-                        }
+                FilterBar {
+                    isDarkMode: backend.isDarkMode
+                    fgColor: mainWindow.fgColor
+                    cardColor: mainWindow.cardColor
+                    cardHover: mainWindow.cardHover
+                    accentColor: mainWindow.accentColor
+                    
+                    onFilterActivated: type => {
+                        backend.typeFilter = type
+                        backend.loadData()
                     }
-
-                    Item { Layout.fillWidth: true }
-
-                    Button {
-                        flat: true
-                        Layout.preferredHeight: 28
-                        contentItem: Text {
-                            text: "Clear all"
-                            font.pixelSize: 12
-                            color: clearBtnMouse.containsMouse ? mainWindow.accentColor : mainWindow.fgColor
-                            opacity: clearBtnMouse.containsMouse ? 1.0 : 0.6
-                            horizontalAlignment: Text.AlignHCenter
-                            verticalAlignment: Text.AlignVCenter
-                        }
-                        background: Rectangle {
-                            radius: 4
-                            color: clearBtnMouse.containsMouse ? (backend.isDarkMode ? "#333" : "#eee") : "transparent"
-                            border.color: clearBtnMouse.containsMouse ? "#ddd" : "transparent"
-                        }
-                        MouseArea {
-                            id: clearBtnMouse
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: {
-                                confirmClearDialog.visible = true
-                            }
-                        }
+                    
+                    onClearAllRequested: {
+                        confirmClearDialog.visible = true
                     }
                 }
 

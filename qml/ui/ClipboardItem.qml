@@ -160,106 +160,27 @@ Rectangle {
                     onClicked: moreMenu.opened ? moreMenu.close() : moreMenu.open()
                 }
 
-                Menu {
+                ClipboardItemMenu {
                     id: moreMenu
                     y: parent.height + 4
                     x: -width + parent.width
-                    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
                     
-                    background: Rectangle {
-                        implicitWidth: 140
-                        color: rootItem.cardColor
-                        border.color: rootItem.isDarkMode ? "#333" : "#ddd"
-                        border.width: 1
-                        radius: 8
-                        layer.enabled: true
-                        layer.effect: MultiEffect {
-                            shadowEnabled: true
-                            shadowColor: rootItem.shadowColor
-                            shadowBlur: 0.8
-                            shadowVerticalOffset: 4
-                        }
-                    }
-
-                    MenuItem {
-                        text: "Open in Browser"
-                        visible: rootItem.isUrl
-                        height: visible ? 36 : 0
-                        onTriggered: {
-                            let url = rootItem.content.trim()
-                            if (!url.startsWith("http://") && !url.startsWith("https://")) {
-                                url = "https://" + url
-                            }
-                            // Rely on PATH to find the daemon
-                            openUrlProc.command = ["jcm-daemon", "open-url", url]
-                            openUrlProc.running = true
-                        }
-                        contentItem: Text {
-                            text: parent.text
-                            color: rootItem.fgColor
-                            font.pixelSize: 13
-                            leftPadding: 12
-                            verticalAlignment: Text.AlignVCenter
-                        }
-                        background: Rectangle {
-                            color: parent.hovered ? rootItem.cardHover : "transparent"
-                            radius: 4
-                            anchors.fill: parent
-                            anchors.margins: 4
-                        }
-                        MouseArea {
-                            anchors.fill: parent
-                            acceptedButtons: Qt.NoButton
-                            cursorShape: Qt.PointingHandCursor
-                        }
-                    }
-
-                    MenuItem {
-                        text: rootItem.isPinned ? "Unpin" : "Pin"
-                        onTriggered: pinToggled(!rootItem.isPinned)
-                        height: 36
-                        contentItem: Text {
-                            text: parent.text
-                            color: rootItem.fgColor
-                            font.pixelSize: 13
-                            leftPadding: 12
-                            verticalAlignment: Text.AlignVCenter
-                        }
-                        background: Rectangle {
-                            color: parent.hovered ? rootItem.cardHover : "transparent"
-                            radius: 4
-                            anchors.fill: parent
-                            anchors.margins: 4
-                        }
-                        MouseArea {
-                            anchors.fill: parent
-                            acceptedButtons: Qt.NoButton
-                            cursorShape: Qt.PointingHandCursor
-                        }
-                    }
-
-                    MenuItem {
-                        text: "Delete"
-                        onTriggered: deleteRequested()
-                        height: 36
-                        contentItem: Text {
-                            text: parent.text
-                            color: rootItem.dangerColor
-                            font.pixelSize: 13
-                            leftPadding: 12
-                            verticalAlignment: Text.AlignVCenter
-                        }
-                        background: Rectangle {
-                            color: parent.hovered ? rootItem.cardHover : "transparent"
-                            radius: 4
-                            anchors.fill: parent
-                            anchors.margins: 4
-                        }
-                        MouseArea {
-                            anchors.fill: parent
-                            acceptedButtons: Qt.NoButton
-                            cursorShape: Qt.PointingHandCursor
-                        }
+                    fgColor: rootItem.fgColor
+                    cardColor: rootItem.cardColor
+                    cardHover: rootItem.cardHover
+                    dangerColor: rootItem.dangerColor
+                    shadowColor: rootItem.shadowColor
+                    isDarkMode: rootItem.isDarkMode
+                    
+                    isPinned: rootItem.isPinned
+                    isUrl: rootItem.isUrl
+                    itemContent: rootItem.content
+                    
+                    onPinToggled: (val) => rootItem.pinToggled(val)
+                    onDeleteRequested: rootItem.deleteRequested()
+                    onOpenUrlRequested: (url) => {
+                        openUrlProc.command = ["jcm-daemon", "open-url", url]
+                        openUrlProc.running = true
                     }
                 }
             }
