@@ -5,7 +5,8 @@ A modern, aesthetic, and lightweight clipboard manager for **Wayland**, built wi
 > [!NOTE]
 > This is a **Vibecoding** project—built iteratively through AI collaboration to prioritize UX, speed, and a premium aesthetic.
 
-![Aesthetic Preview]()
+![Aesthetic Preview Light mode](https://github.com/justanoobcoder/jcm/blob/main/img/1.png?raw=true)
+![Aesthetic Preview Dark mode](https://github.com/justanoobcoder/jcm/blob/main/img/2.png?raw=true)
 
 ## ✨ Features
 
