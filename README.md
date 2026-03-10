@@ -41,7 +41,7 @@ To run JCM, you need the following tools installed on your system:
 
 2. **Launch the app**:
    ```bash
-   ./jcm
+   ./bin/jcm
    ```
    *The script will automatically spawn the background daemon if it's not already running.*
 
