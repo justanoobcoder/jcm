@@ -323,12 +323,12 @@ def main():
     elif args.command == "theme":
         THEMES = {
             "Dark": {
-                "bgColor": "#1a1b26",
-                "fgColor": "#ffffff",
-                "cardColor": "#24283b",
-                "cardHover": "#2f334d",
-                "accentColor": "#0067c0",
-                "dangerColor": "#f7768e",
+                "bgColor": "#121212",
+                "fgColor": "#e8eaed",
+                "cardColor": "#1e1e1e",
+                "cardHover": "#2c2c2c",
+                "accentColor": "#8ab4f8",
+                "dangerColor": "#f28b82",
                 "shadowColor": "#000000"
             },
             "Light": {
