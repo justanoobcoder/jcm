@@ -5,8 +5,8 @@ CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/quickshell/jcm"
 # Get the directory where this script is located
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
-# 1. Check if we are running in the development folder
-if [[ -f "$SCRIPT_DIR/jcm-daemon" ]]; then
+# 1. Check if we are running in the development folder (files co-located)
+if [[ -f "$SCRIPT_DIR/shell.qml" ]]; then
     BASE_DIR="$SCRIPT_DIR"
     QML_PATH="$BASE_DIR/shell.qml"
 # 2. Check if the project is in the standard user config location
