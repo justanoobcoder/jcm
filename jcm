@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+# Use XDG_CONFIG_HOME if set, otherwise fallback to standard config data
+CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/quickshell/jcm"
+# Get the directory where this script is located
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+
+# 1. Check if we are running in the development folder
+if [[ -f "$SCRIPT_DIR/jcm-daemon" ]]; then
+    BASE_DIR="$SCRIPT_DIR"
+    QML_PATH="$BASE_DIR/shell.qml"
+# 2. Check if the project is in the standard config location
+elif [[ -f "$CONFIG_DIR/shell.qml" ]]; then
+    BASE_DIR="$CONFIG_DIR"
+    QML_PATH="$BASE_DIR/shell.qml"
+# 3. Fallback to current directory (least preferred)
+else
+    BASE_DIR="$(pwd)"
+    QML_PATH="./shell.qml"
+fi
+
+# Ensure the daemon's directory is in PATH so Quickshell's Process items can find it
+if [[ -f "$BASE_DIR/jcm-daemon" ]]; then
+    export PATH="$BASE_DIR:$PATH"
+    DAEMON_CMD="jcm-daemon"
+else
+    DAEMON_CMD="jcm-daemon"
+fi
+
+# Start daemon if not running
+if ! pgrep -f "jcm-daemon store" > /dev/null; then
+    $DAEMON_CMD watch &
+fi
+
+# Check if quickshell is running this config
+if pgrep -f "quickshell -p $QML_PATH" > /dev/null; then
+    pkill -f "quickshell -p $QML_PATH"
+else
+    quickshell -p "$QML_PATH" "$@" &
+fi
