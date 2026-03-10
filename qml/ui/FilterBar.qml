@@ -10,7 +10,8 @@ RowLayout {
     property color cardColor: "white"
     property color cardHover: "#f5f5f5"
     property color accentColor: "#0067c0"
-    property bool isDarkMode: false
+    property string themeName: "Dark"
+    property bool isDarkTheme: themeName !== "Light"
     property bool isPaused: false
     
     // Callbacks to interact with backend/UI
@@ -22,6 +23,7 @@ RowLayout {
         id: typeFilterBox
         model: ["All", "Text", "Image", "Color", "Link"]
         currentIndex: 0
+        focusPolicy: Qt.NoFocus
         Layout.preferredWidth: 100
         Layout.preferredHeight: 32
 
@@ -50,9 +52,9 @@ RowLayout {
             font.pixelSize: 14
         }
         background: Rectangle {
-            color: typeFilterBox.hovered ? (filterBarRoot.isDarkMode ? "#333" : "#e6e6e6") : (filterBarRoot.isDarkMode ? "#222" : "#f5f5f5")
+            color: typeFilterBox.hovered ? (filterBarRoot.isDarkTheme ? "#333" : "#e6e6e6") : (filterBarRoot.isDarkTheme ? "#222" : "#f5f5f5")
             radius: 6
-            border.color: typeFilterBox.hovered ? filterBarRoot.accentColor : (filterBarRoot.isDarkMode ? "#444" : "#ccc")
+            border.color: typeFilterBox.hovered ? filterBarRoot.accentColor : (filterBarRoot.isDarkTheme ? "#444" : "#ccc")
             border.width: 1
             
             MouseArea {
@@ -67,7 +69,7 @@ RowLayout {
             padding: 4
             background: Rectangle {
                 color: filterBarRoot.cardColor
-                border.color: filterBarRoot.isDarkMode ? "#333" : "#ddd"
+                border.color: filterBarRoot.isDarkTheme ? "#333" : "#ddd"
                 radius: 8
             }
             contentItem: ListView {
@@ -101,6 +103,7 @@ RowLayout {
 
     Button {
         flat: true
+        focusPolicy: Qt.NoFocus
         Layout.preferredHeight: 28
         contentItem: Text {
             text: filterBarRoot.isPaused ? "▶ Resume" : "⏸ Pause"
@@ -112,7 +115,7 @@ RowLayout {
         }
         background: Rectangle {
             radius: 4
-            color: pauseBtnMouse.containsMouse ? (filterBarRoot.isDarkMode ? "#333" : "#eee") : "transparent"
+            color: pauseBtnMouse.containsMouse ? (filterBarRoot.isDarkTheme ? "#333" : "#eee") : "transparent"
             border.color: pauseBtnMouse.containsMouse ? "#ddd" : "transparent"
         }
         MouseArea {
@@ -128,6 +131,7 @@ RowLayout {
 
     Button {
         flat: true
+        focusPolicy: Qt.NoFocus
         Layout.preferredHeight: 28
         contentItem: Text {
             text: "Clear all"
@@ -139,7 +143,7 @@ RowLayout {
         }
         background: Rectangle {
             radius: 4
-            color: clearBtnMouse.containsMouse ? (filterBarRoot.isDarkMode ? "#333" : "#eee") : "transparent"
+            color: clearBtnMouse.containsMouse ? (filterBarRoot.isDarkTheme ? "#333" : "#eee") : "transparent"
             border.color: clearBtnMouse.containsMouse ? "#ddd" : "transparent"
         }
         MouseArea {

@@ -10,7 +10,8 @@ A modern, aesthetic, and lightweight clipboard manager for **Wayland**, built wi
 
 ## ✨ Features
 
-- **Modern Aesthetic**: Windows 11-inspired design, glassmorphism hints, and buttery smooth transitions.
+- **Modern Aesthetic**: Glassmorphism hints and buttery smooth transitions.
+- **Dynamic ThemingEngine**: Swap instantly between built-in themes (Dark, Light, Catppuccin, Nord, Dracula, Gruvbox) or define your own custom palettes in `~/.config/jcm/themes.json`.
 - **Smart Detection**:
   - **Colors**: Automatically detects Hex and RGB/RGBA codes and shows a live preview box.
   - **Links**: Detects URLs and provides an "Open in Browser" action directly.
@@ -18,7 +19,7 @@ A modern, aesthetic, and lightweight clipboard manager for **Wayland**, built wi
 - **Image Support**: Captures and previews images with aspect-ratio awareness.
 - **Persistence**: Powered by SQLite for reliable history storage.
 - **Filtering & Search**: Quickly find clips by text content or category (All, Text, Image, Color, Link).
-- **Pause/Resume**: Pause and resume clipboard history record
+- **Pause/Resume**: Instantly pause the daemon from recording new clipboard items to prevent sensitive data from entering your history.
 - **Auto-Cleanup**: Optional "Auto-delete on reboot" to keep your daily history fresh while preserving your **pinned** items.
 
 ## 🛠️ Dependencies
@@ -108,9 +109,16 @@ Use the dropdown in the header to filter by:
 ## ⚙️ Configuration
 
 Toggle these via the gear icon in the app:
-- **Dark Mode**: Switch between light and dark aesthetics.
+- **Theme**: Swap between beautiful built-in defaults or select a dynamically loaded custom theme.
 - **Auto Delete**: Automatically clear unpinned history on reboot.
 - **Paste Right Away**: Instantly paste clips into your active window when selected.
+
+### Custom Themes
+You can load your own custom color palettes! To get started, automatically generate an example configuration file by running:
+```bash
+jcm-daemon theme generate-example
+```
+Then, open `~/.config/jcm/themes.json` in your favorite editor to customize the `bgColor`, `accentColor`, and more! Your custom named themes will instantly appear in the JCM Settings dropdown.
 
 ---
 *Built with ❤️ for the Wayland ecosystem.*

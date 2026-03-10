@@ -5,22 +5,67 @@ import Quickshell.Io
 Item {
     id: backendRoot
 
-    property bool isDarkMode: false
+    property string themeName: "Dark"
+    property color bgColor: "#1a1b26"
+    property color fgColor: "#ffffff"
+    property color cardColor: "#24283b"
+    property color cardHover: "#2f334d"
+    property color accentColor: "#0067c0"
+    property color dangerColor: "#f7768e"
+    property color shadowColor: "#000000"
     property bool isAutoDelete: false
     property bool isPasteRightAway: false
     property bool isPaused: false
     property string typeFilter: "all"
+    property var themeList: []
     
     // Model reference passed from UI
     property ListModel targetModel: null
     property Item listView: null
 
     Process {
-        id: initTheme
-        command: ["jcm-daemon", "config", "get", "dark_mode"]
+        id: initThemeName
+        command: ["jcm-daemon", "config", "get", "theme"]
         running: true
         stdout: SplitParser {
-            onRead: data => { backendRoot.isDarkMode = (data.trim() === "true") }
+            onRead: data => { 
+                let t = data.trim()
+                if (t === "") t = "Dark"
+                backendRoot.themeName = t 
+            }
+        }
+    }
+
+    Process {
+        id: initThemeList
+        command: ["jcm-daemon", "theme", "list"]
+        running: true
+        stdout: SplitParser {
+            onRead: data => { 
+                try {
+                    backendRoot.themeList = JSON.parse(data)
+                } catch (e) {}
+            }
+        }
+    }
+
+    Process {
+        id: initThemeColors
+        command: ["jcm-daemon", "theme", "get"]
+        running: true
+        stdout: SplitParser {
+            onRead: data => { 
+                try {
+                    let t = JSON.parse(data)
+                    backendRoot.bgColor = t.bgColor
+                    backendRoot.fgColor = t.fgColor
+                    backendRoot.cardColor = t.cardColor
+                    backendRoot.cardHover = t.cardHover
+                    backendRoot.accentColor = t.accentColor
+                    backendRoot.dangerColor = t.dangerColor
+                    backendRoot.shadowColor = t.shadowColor
+                } catch (e) {}
+            }
         }
     }
     
@@ -137,6 +182,16 @@ Item {
     }
 
     Process {
+        id: setThemeProc
+        command: []
+        running: false
+        onExited: (exitCode, exitStatus) => {
+            if (initThemeColors.running) initThemeColors.running = false
+            initThemeColors.running = true
+        }
+    }
+
+    Process {
         id: silentProc
         command: []
         running: false
@@ -172,10 +227,10 @@ Item {
         actionProc.running = true
     }
     
-    function setDarkMode(val) {
-        backendRoot.isDarkMode = val
-        silentProc.command = ["jcm-daemon", "config", "set", "dark_mode", val ? "true" : "false"]
-        silentProc.running = true
+    function setTheme(val) {
+        backendRoot.themeName = val
+        setThemeProc.command = ["jcm-daemon", "config", "set", "theme", val]
+        setThemeProc.running = true
     }
     
     function setAutoDelete(val) {
@@ -214,8 +269,11 @@ Item {
         listProc.running = false
         actionProc.running = false
         getProc.running = false
+        setThemeProc.running = false
         silentProc.running = false
-        initTheme.running = false
+        initThemeName.running = false
+        initThemeList.running = false
+        initThemeColors.running = false
         initAutoDelete.running = false
         initPaste.running = false
         initPauseState.running = false

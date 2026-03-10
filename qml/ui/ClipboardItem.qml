@@ -20,7 +20,8 @@ Rectangle {
     property color cardHover: "#f5f5f5"
     property color accentColor: "#0067c0"
     property color dangerColor: "#e81123"
-    property bool isDarkMode: false
+    property string themeName: "Dark"
+    property bool isDarkTheme: themeName !== "Light"
 
     signal pinToggled(bool value)
     signal deleteRequested()
@@ -170,7 +171,7 @@ Rectangle {
                     cardHover: rootItem.cardHover
                     dangerColor: rootItem.dangerColor
                     shadowColor: rootItem.shadowColor
-                    isDarkMode: rootItem.isDarkMode
+                    themeName: rootItem.themeName
                     
                     isPinned: rootItem.isPinned
                     isUrl: rootItem.isUrl
@@ -197,8 +198,8 @@ Rectangle {
                 Layout.preferredHeight: 24
                 Layout.preferredWidth: 80
                 radius: 4
-                color: expandMouse.containsMouse ? (rootItem.isDarkMode ? "#444" : "#e0e0e0") : "transparent"
-                border.color: rootItem.isDarkMode ? "#444" : "#ddd"
+                color: expandMouse.containsMouse ? (rootItem.isDarkTheme ? "#444" : "#e0e0e0") : "transparent"
+                border.color: rootItem.isDarkTheme ? "#444" : "#ddd"
                 border.width: 1
 
                 RowLayout {

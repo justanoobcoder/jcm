@@ -13,7 +13,8 @@ Menu {
     property color cardHover: "#f5f5f5"
     property color dangerColor: "#e81123"
     property color shadowColor: "#20000000"
-    property bool isDarkMode: false
+    property string themeName: "Dark"
+    property bool isDarkTheme: themeName !== "Light"
     
     property bool isPinned: false
     property bool isUrl: false
@@ -27,7 +28,7 @@ Menu {
     background: Rectangle {
         implicitWidth: 140
         color: moreMenu.cardColor
-        border.color: moreMenu.isDarkMode ? "#333" : "#ddd"
+        border.color: moreMenu.isDarkTheme ? "#333" : "#ddd"
         border.width: 1
         radius: 8
         layer.enabled: true

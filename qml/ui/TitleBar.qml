@@ -18,7 +18,8 @@ ColumnLayout {
     property color cardColor: "#ffffff"
     property color cardHover: "#f3f3f3"
     property color accentColor: "#0067c0"
-    property bool isDarkMode: false
+    property string themeName: "Dark"
+    property bool isDarkTheme: themeName !== "Light"
 
     spacing: 12
 
@@ -40,7 +41,7 @@ ColumnLayout {
             width: 30
             height: 30
             radius: 4
-            color: gearBtn.containsMouse ? (rootTitle.isDarkMode ? "#333333" : "#e0e0e0") : "transparent"
+            color: gearBtn.containsMouse ? (rootTitle.isDarkTheme ? "#333333" : "#e0e0e0") : "transparent"
             Text { anchors.centerIn: parent; text: "⚙️"; font.pixelSize: 16 }
             MouseArea {
                 id: gearBtn
@@ -56,8 +57,8 @@ ColumnLayout {
     Rectangle {
         Layout.fillWidth: true
         height: 36
-        color: rootTitle.isDarkMode ? "#2d2d2d" : "#f9f9f9"
-        border.color: searchFocus.activeFocus ? rootTitle.accentColor : (rootTitle.isDarkMode ? "#444" : "#ddd")
+        color: rootTitle.isDarkTheme ? "#2d2d2d" : "#f9f9f9"
+        border.color: searchFocus.activeFocus ? rootTitle.accentColor : (rootTitle.isDarkTheme ? "#444" : "#ddd")
         border.width: searchFocus.activeFocus ? 2 : 1
         radius: 6
         
