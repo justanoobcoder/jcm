@@ -6,7 +6,8 @@ Rectangle {
     id: confirmRoot
     visible: false
     
-    property bool isDarkMode: true
+    property string themeName: "Dark"
+    property bool isDarkTheme: themeName !== "Light"
     property color fgColor: "white"
     property color bgColor: "#1a1b26"
     property color accentColor: "#0067c0"
@@ -33,7 +34,7 @@ Rectangle {
         height: 180
         color: bgColor
         radius: 12
-        border.color: isDarkMode ? "#333" : "#ddd"
+        border.color: isDarkTheme ? "#333" : "#ddd"
         border.width: 1
 
         // Consume clicks inside the dialog so it doesn't trigger the background
@@ -87,8 +88,8 @@ Rectangle {
                     }
                     background: Rectangle {
                         radius: 6
-                        color: parent.hovered ? (isDarkMode ? "#333" : "#eee") : "transparent"
-                        border.color: isDarkMode ? "#555" : "#ccc"
+                        color: parent.hovered ? (isDarkTheme ? "#333" : "#eee") : "transparent"
+                        border.color: isDarkTheme ? "#555" : "#ccc"
                         border.width: 1
                     }
                     MouseArea {

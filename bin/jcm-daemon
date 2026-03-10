@@ -284,6 +284,12 @@ def main():
     c_get = cfg_sub.add_parser("get")
     c_get.add_argument("key")
     
+    theme_parser = subparsers.add_parser("theme")
+    theme_sub = theme_parser.add_subparsers(dest="theme_cmd")
+    theme_sub.add_parser("get")
+    theme_sub.add_parser("list")
+    theme_sub.add_parser("generate-example")
+    
     args = parser.parse_args()
     
     init_db()
@@ -314,6 +320,100 @@ def main():
             print(get_setting(args.key, ""))
     elif args.command == "open-url":
         open_url(args.url)
+    elif args.command == "theme":
+        THEMES = {
+            "Dark": {
+                "bgColor": "#1a1b26",
+                "fgColor": "#ffffff",
+                "cardColor": "#24283b",
+                "cardHover": "#2f334d",
+                "accentColor": "#0067c0",
+                "dangerColor": "#f7768e",
+                "shadowColor": "#000000"
+            },
+            "Light": {
+                "bgColor": "#f0f0f0",
+                "fgColor": "#000000",
+                "cardColor": "#ffffff",
+                "cardHover": "#e0e0e0",
+                "accentColor": "#0067c0",
+                "dangerColor": "#d32f2f",
+                "shadowColor": "#cccccc"
+            },
+            "Catppuccin Macchiato": {
+                "bgColor": "#24273a",
+                "fgColor": "#cad3f5",
+                "cardColor": "#363a4f",
+                "cardHover": "#494d64",
+                "accentColor": "#8aadf4",
+                "dangerColor": "#ed8796",
+                "shadowColor": "#181926"
+            },
+            "Nord": {
+                "bgColor": "#2e3440",
+                "fgColor": "#eceff4",
+                "cardColor": "#3b4252",
+                "cardHover": "#434c5e",
+                "accentColor": "#88c0d0",
+                "dangerColor": "#bf616a",
+                "shadowColor": "#2e3440"
+            },
+            "Dracula": {
+                "bgColor": "#282a36",
+                "fgColor": "#f8f8f2",
+                "cardColor": "#44475a",
+                "cardHover": "#6272a4",
+                "accentColor": "#bd93f9",
+                "dangerColor": "#ff5555",
+                "shadowColor": "#282a36"
+            },
+            "Gruvbox": {
+                "bgColor": "#282828",
+                "fgColor": "#ebdbb2",
+                "cardColor": "#3c3836",
+                "cardHover": "#504945",
+                "accentColor": "#83a598",
+                "dangerColor": "#cc241d",
+                "shadowColor": "#1d2021"
+            }
+        }      
+        custom_path = os.path.expanduser("~/.config/jcm/themes.json")
+        if os.path.exists(custom_path):
+            try:
+                with open(custom_path, 'r') as f:
+                    custom_themes = json.load(f)
+                    for k, v in custom_themes.items():
+                        if isinstance(v, dict):
+                            THEMES[k] = v
+            except Exception as e:
+                log(f"Failed to load custom themes: {e}")
+        
+        if args.theme_cmd == "list":
+            print(json.dumps(list(THEMES.keys())))
+        elif args.theme_cmd == "get":
+            theme_name = get_setting("theme", "Dark")
+            theme_data = THEMES.get(theme_name, THEMES["Dark"])
+            print(json.dumps(theme_data))
+        elif args.theme_cmd == "generate-example":
+            example = {
+                "Example Custom Theme": {
+                    "bgColor": "#000000",
+                    "fgColor": "#00ff00",
+                    "cardColor": "#111111",
+                    "cardHover": "#222222",
+                    "accentColor": "#00aa00",
+                    "dangerColor": "#ff0000",
+                    "shadowColor": "#0a0a0a"
+                }
+            }
+            if not os.path.exists(os.path.dirname(custom_path)):
+                os.makedirs(os.path.dirname(custom_path), exist_ok=True)
+            try:
+                with open(custom_path, 'w') as f:
+                    json.dump(example, f, indent=4)
+                print(f"Example themes saved to {custom_path}")
+            except Exception as e:
+                print(f"Failed to generate example themes: {e}")
             
 if __name__ == "__main__":
     main()

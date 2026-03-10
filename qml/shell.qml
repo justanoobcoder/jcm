@@ -54,13 +54,13 @@ ShellRoot {
             onActivated: titleBar.forceSearchFocus()
         }
 
-        property color bgColor: backend.isDarkMode ? "#121212" : "#f0f2f5"
-        property color fgColor: backend.isDarkMode ? "#e8eaed" : "#202124"
-        property color cardColor: backend.isDarkMode ? "#1e1e1e" : "#ffffff"
-        property color cardHover: backend.isDarkMode ? "#2c2c2c" : "#f8f9fa"
-        property color shadowColor: backend.isDarkMode ? "#000000" : "#20000000"
-        property color accentColor: backend.isDarkMode ? "#8ab4f8" : "#1a73e8"
-        property color dangerColor: backend.isDarkMode ? "#f28b82" : "#d93025"
+        property color bgColor: backend.bgColor
+        property color fgColor: backend.fgColor
+        property color cardColor: backend.cardColor
+        property color cardHover: backend.cardHover
+        property color shadowColor: backend.shadowColor
+        property color accentColor: backend.accentColor
+        property color dangerColor: backend.dangerColor
 
         Shortcut {
             sequence: "q"
@@ -73,7 +73,7 @@ ShellRoot {
             anchors.fill: parent
             color: mainWindow.bgColor
             radius: 12
-            border.color: backend.isDarkMode ? "#333" : "#ddd"
+            border.color: backend.cardHover
             border.width: 1
 
             ColumnLayout {
@@ -83,7 +83,7 @@ ShellRoot {
 
                 TitleBar {
                     id: titleBar
-                    isDarkMode: backend.isDarkMode
+                    themeName: backend.themeName
                     fgColor: mainWindow.fgColor
                     cardColor: mainWindow.cardColor
                     cardHover: mainWindow.cardHover
@@ -97,7 +97,7 @@ ShellRoot {
                 }
 
                 FilterBar {
-                    isDarkMode: backend.isDarkMode
+                    themeName: backend.themeName
                     isPaused: backend.isPaused
                     fgColor: mainWindow.fgColor
                     cardColor: mainWindow.cardColor
@@ -158,7 +158,7 @@ ShellRoot {
                         accentColor: mainWindow.accentColor
                         dangerColor: mainWindow.dangerColor
                         shadowColor: mainWindow.shadowColor
-                        isDarkMode: backend.isDarkMode
+                        themeName: backend.themeName
 
                         onPinToggled: (val) => {
                             backend.pinItem(model.id, val)
@@ -179,14 +179,15 @@ ShellRoot {
 
             SettingsDrawer {
                 id: settingsDrawer
-                isDarkMode: backend.isDarkMode
+                themeName: backend.themeName
+                themeList: backend.themeList
                 isAutoDelete: backend.isAutoDelete
                 isPasteRightAway: backend.isPasteRightAway
                 fgColor: mainWindow.fgColor
                 bgColor: mainWindow.cardColor
                 accentColor: mainWindow.accentColor
 
-                onDarkModeToggled: val => { backend.setDarkMode(val) }
+                onThemeChanged: val => { backend.setTheme(val) }
                 onAutoDeleteToggled: val => { backend.setAutoDelete(val) }
                 onPasteRightAwayToggled: val => { backend.setPasteRightAway(val) }
                 onClearHistoryRequested: {
@@ -198,7 +199,7 @@ ShellRoot {
 
             ConfirmClearDialog {
                 id: confirmClearDialog
-                isDarkMode: backend.isDarkMode
+                themeName: backend.themeName
                 fgColor: mainWindow.fgColor
                 bgColor: mainWindow.cardColor
                 accentColor: mainWindow.accentColor
