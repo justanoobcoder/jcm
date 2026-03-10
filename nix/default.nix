@@ -7,12 +7,18 @@
   wtype,
   xdg-utils,
   quickshell,
+  fetchFromGitHub,
 }:
-stdenv.mkDerivation {
+stdenv.mkDerivation rec {
   pname = "jcm";
   version = "0.1";
 
-  src = ../.;
+  src = fetchFromGitHub {
+    owner = "justanoobcoder";
+    repo = "jcm";
+    rev = "v${version}";
+    hash = "sha256-Brpsv58VY0CpWUfSHOkY//GLgJow/7j9AzpBfYSA/1g=";
+  };
 
   nativeBuildInputs = [makeWrapper];
 
@@ -20,7 +26,7 @@ stdenv.mkDerivation {
     python3Packages.python
   ];
 
-  makeFlags = [ "PREFIX=${placeholder "out"}" ];
+  makeFlags = ["PREFIX=${placeholder "out"}"];
 
   postFixup = ''
     substituteInPlace $out/bin/jcm \
