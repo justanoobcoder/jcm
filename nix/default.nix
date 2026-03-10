@@ -24,8 +24,8 @@ stdenv.mkDerivation {
 
   postFixup = ''
     substituteInPlace $out/bin/jcm \
-      --replace-warn 'QML_PATH="$BASE_DIR/shell.qml"' 'QML_PATH="'$out'/share/jcm/shell.qml"' \
-      --replace-warn 'QML_PATH="./shell.qml"' 'QML_PATH="'$out'/share/jcm/shell.qml"'
+      --replace-warn 'QML_PATH="$BASE_DIR/qml/shell.qml"' 'QML_PATH="'$out'/share/jcm/qml/shell.qml"' \
+      --replace-warn 'QML_PATH="./qml/shell.qml"' 'QML_PATH="'$out'/share/jcm/qml/shell.qml"'
 
     wrapProgram $out/bin/jcm-daemon \
       --prefix PATH : ${lib.makeBinPath [wl-clipboard wtype xdg-utils]}

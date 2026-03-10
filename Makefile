@@ -10,7 +10,7 @@ install:
 	install -Dm755 bin/jcm-daemon $(DESTDIR)$(PREFIX)/bin/jcm-daemon
 	install -Dm755 bin/jcm $(DESTDIR)$(PREFIX)/bin/jcm
 	install -d $(DESTDIR)$(PREFIX)/share/jcm
-	cp ui/*.qml $(DESTDIR)$(PREFIX)/share/jcm/
+	cp -r qml $(DESTDIR)$(PREFIX)/share/jcm/
 
 uninstall:
 	rm -f $(DESTDIR)$(PREFIX)/bin/jcm-daemon
