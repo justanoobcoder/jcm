@@ -20,21 +20,7 @@ stdenv.mkDerivation {
     python3Packages.python
   ];
 
-  installPhase = ''
-    runHook preInstall
-
-    mkdir -p $out/bin
-    mkdir -p $out/share/jcm
-
-    # Copy QML files
-    cp *.qml $out/share/jcm/
-
-    install -Dm755 jcm-daemon $out/bin/jcm-daemon
-
-    install -Dm755 jcm $out/bin/jcm
-
-    runHook postInstall
-  '';
+  makeFlags = [ "PREFIX=${placeholder "out"}" ];
 
   postFixup = ''
     substituteInPlace $out/bin/jcm \

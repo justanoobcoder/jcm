@@ -5,10 +5,10 @@ CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/quickshell/jcm"
 # Get the directory where this script is located
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
-# 1. Check if we are running in the development folder (files co-located)
-if [[ -f "$SCRIPT_DIR/shell.qml" ]]; then
-    BASE_DIR="$SCRIPT_DIR"
-    QML_PATH="$BASE_DIR/shell.qml"
+# 1. Check if we are running in the development folder (app launched from source tree)
+if [[ -f "$SCRIPT_DIR/../ui/shell.qml" ]]; then
+    BASE_DIR="$( cd "$SCRIPT_DIR/.." &> /dev/null && pwd )"
+    QML_PATH="$BASE_DIR/ui/shell.qml"
 # 2. Check if the project is in the standard user config location
 elif [[ -f "$CONFIG_DIR/shell.qml" ]]; then
     BASE_DIR="$CONFIG_DIR"
@@ -20,12 +20,12 @@ elif [[ -f "/usr/share/jcm/shell.qml" ]]; then
 # 4. Fallback to current directory (least preferred)
 else
     BASE_DIR="$(pwd)"
-    QML_PATH="./shell.qml"
+    QML_PATH="./ui/shell.qml"
 fi
 
 # Ensure the daemon's directory is in PATH so Quickshell's Process items can find it
-if [[ -f "$BASE_DIR/jcm-daemon" ]]; then
-    export PATH="$BASE_DIR:$PATH"
+if [[ -f "$SCRIPT_DIR/jcm-daemon" ]]; then
+    export PATH="$SCRIPT_DIR:$PATH"
     DAEMON_CMD="jcm-daemon"
 else
     DAEMON_CMD="jcm-daemon"
