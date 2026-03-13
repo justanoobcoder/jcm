@@ -27,9 +27,11 @@ Rectangle {
     signal deleteRequested()
     signal copyRequested()
     signal imagePreviewRequested(string filepath)
+    signal editItemRequested(string newContent)
 
     property bool expanded: false
     property bool isCurrent: false
+    property bool isEditing: false
     
     property color shadowColor: "#20000000" // Default light shadow
     
@@ -113,7 +115,7 @@ Rectangle {
             // Preview Region
             Item {
                 Layout.fillWidth: true
-                Layout.preferredHeight: rootItem.type === "image" ? 100 : (expanded ? textContent.implicitHeight : Math.min(textContent.implicitHeight, 40))
+                Layout.preferredHeight: rootItem.type === "image" ? 100 : (rootItem.isEditing ? Math.max(80, textArea.implicitHeight + 20) : (expanded ? textContent.implicitHeight : Math.min(textContent.implicitHeight, 40)))
                 clip: true
 
                 // Image preview
@@ -166,7 +168,7 @@ Rectangle {
                 // Text preview
                 Text {
                     id: textContent
-                    visible: rootItem.type === "text"
+                    visible: rootItem.type === "text" && !rootItem.isEditing
                     anchors.fill: parent
                     text: rootItem.type === "text" ? rootItem.content : ""
                     color: rootItem.fgColor
@@ -175,6 +177,26 @@ Rectangle {
                     wrapMode: Text.Wrap
                     elide: expanded ? Text.ElideNone : Text.ElideRight
                     maximumLineCount: expanded ? 100 : 2
+                }
+
+                // Text Editor
+                ScrollView {
+                    visible: rootItem.type === "text" && rootItem.isEditing
+                    anchors.fill: parent
+                    clip: true
+                    TextArea {
+                        id: textArea
+                        text: rootItem.content
+                        color: rootItem.fgColor
+                        font.pixelSize: 14
+                        wrapMode: TextEdit.Wrap
+                        background: Rectangle {
+                            color: rootItem.isDarkTheme ? "#1a1a24" : "#fbfbfb"
+                            border.color: rootItem.accentColor
+                            border.width: 1
+                            radius: 4
+                        }
+                    }
                 }
             }
 
@@ -215,11 +237,17 @@ Rectangle {
                     isPinned: rootItem.isPinned
                     isUrl: rootItem.isUrl
                     isImage: rootItem.type === "image"
+                    isText: rootItem.type === "text"
                     itemContent: rootItem.content
                     
                     onPinToggled: (val) => rootItem.pinToggled(val)
                     onDeleteRequested: rootItem.deleteRequested()
                     onImagePreviewRequested: (filepath) => rootItem.imagePreviewRequested(filepath)
+                    onEditRequested: {
+                        rootItem.isEditing = true
+                        textArea.text = rootItem.content
+                        textArea.forceActiveFocus()
+                    }
                     onOpenUrlRequested: (url) => {
                         openUrlProc.command = ["jcm-daemon", "open-url", url]
                         openUrlProc.running = true
@@ -232,6 +260,7 @@ Rectangle {
         RowLayout {
             Layout.fillWidth: true
             spacing: 12
+            visible: !rootItem.isEditing
 
             // Expand Button (under the text)
             Rectangle {
@@ -310,16 +339,85 @@ Rectangle {
                 }
             }
         }
+
+        // Bottom row (Editing): Save / Cancel
+        RowLayout {
+            Layout.fillWidth: true
+            spacing: 12
+            visible: rootItem.isEditing
+
+            Button {
+                text: "Save"
+                onClicked: {
+                    rootItem.editItemRequested(textArea.text)
+                    rootItem.isEditing = false
+                }
+                contentItem: Text {
+                    text: parent.text
+                    color: "white"
+                    font.pixelSize: 13
+                    font.bold: true
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
+                background: Rectangle {
+                    radius: 4
+                    color: rootItem.accentColor
+                    implicitWidth: 80
+                    implicitHeight: 28
+                    opacity: parent.down ? 0.8 : (parent.hovered ? 0.9 : 1.0)
+                }
+                MouseArea {
+                    anchors.fill: parent
+                    acceptedButtons: Qt.NoButton
+                    cursorShape: Qt.PointingHandCursor
+                }
+            }
+
+            Button {
+                text: "Cancel"
+                onClicked: {
+                    textArea.text = rootItem.content
+                    rootItem.isEditing = false
+                }
+                contentItem: Text {
+                    text: parent.text
+                    color: rootItem.fgColor
+                    font.pixelSize: 13
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
+                background: Rectangle {
+                    radius: 4
+                    color: "transparent"
+                    border.color: rootItem.isDarkTheme ? "#444" : "#ccc"
+                    implicitWidth: 80
+                    implicitHeight: 28
+                    opacity: parent.down ? 0.8 : (parent.hovered ? 0.9 : 1.0)
+                }
+                MouseArea {
+                    anchors.fill: parent
+                    acceptedButtons: Qt.NoButton
+                    cursorShape: Qt.PointingHandCursor
+                }
+            }
+
+            Item { Layout.fillWidth: true }
+        }
     }
 
     // Main Click Area (for copying)
     MouseArea {
         id: itemMouse
         anchors.fill: parent
-        hoverEnabled: true
+        hoverEnabled: !rootItem.isEditing
         cursorShape: Qt.PointingHandCursor
         acceptedButtons: Qt.LeftButton
-        onClicked: copyRequested()
+        onClicked: {
+            if (!rootItem.isEditing) {
+                copyRequested()
+            }
+        }
         z: -1
     }
 

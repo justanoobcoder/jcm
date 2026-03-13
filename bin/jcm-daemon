@@ -237,6 +237,13 @@ def set_pin(item_id, pinned):
     conn.commit()
     conn.close()
 
+def edit_item(item_id, content):
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute("UPDATE history SET content=? WHERE id=? AND type='text'", (content, item_id))
+    conn.commit()
+    conn.close()
+
 def get_clip(item_id):
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
@@ -308,6 +315,10 @@ def main():
     
     unpin_parser = subparsers.add_parser("unpin")
     unpin_parser.add_argument("id", type=int)
+
+    edit_parser = subparsers.add_parser("edit")
+    edit_parser.add_argument("id", type=int)
+    edit_parser.add_argument("content")
     
     get_parser = subparsers.add_parser("get")
     get_parser.add_argument("id", type=int)
@@ -363,6 +374,8 @@ def main():
         set_pin(args.id, True)
     elif args.command == "unpin":
         set_pin(args.id, False)
+    elif args.command == "edit":
+        edit_item(args.id, args.content)
     elif args.command == "get":
         get_clip(args.id)
     elif args.command == "config":

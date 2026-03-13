@@ -234,6 +234,11 @@ Item {
         actionProc.command = ["jcm-daemon", isPinned ? "pin" : "unpin", id.toString()]
         actionProc.running = true
     }
+
+    function editItem(id, content) {
+        actionProc.command = ["jcm-daemon", "edit", id.toString(), content]
+        actionProc.running = true
+    }
     
     function clearHistory() {
         actionProc.command = ["jcm-daemon", "clear"]

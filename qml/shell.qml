@@ -172,6 +172,9 @@ ShellRoot {
                         onImagePreviewRequested: (filepath) => {
                             backend.openImage(filepath)
                         }
+                        onEditItemRequested: (newContent) => {
+                            backend.editItem(model.id, newContent)
+                        }
                     }
 
                     ScrollBar.vertical: ScrollBar {
