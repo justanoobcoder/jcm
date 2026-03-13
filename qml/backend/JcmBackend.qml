@@ -17,6 +17,7 @@ Item {
     property bool isPasteRightAway: false
     property bool isPaused: false
     property string typeFilter: "all"
+    property string imageViewerCmd: "xdg-open"
     property var themeList: []
     
     // Model reference passed from UI
@@ -93,6 +94,18 @@ Item {
         running: true
         stdout: SplitParser {
             onRead: data => { backendRoot.isPaused = (data.trim() === "true") }
+        }
+    }
+
+    Process {
+        id: initImageViewer
+        command: ["jcm-daemon", "config", "get-json", "image_viewer"]
+        running: true
+        stdout: SplitParser {
+            onRead: data => { 
+                let t = data.trim()
+                if (t !== "") backendRoot.imageViewerCmd = t
+            }
         }
     }
 
@@ -251,6 +264,16 @@ Item {
         silentProc.running = true
     }
 
+    function setImageViewerCmd(val) {
+        backendRoot.imageViewerCmd = val
+        silentProc.command = ["jcm-daemon", "config", "set-json", "image_viewer", val]
+        silentProc.running = true
+    }
+
+    function openImage(filepath) {
+        let p = Qt.createQmlObject('import Quickshell.Io; Process { command: ["jcm-daemon", "open-image", "' + filepath + '"]; running: true; onExited: destroy() }', backendRoot, "openImageProc")
+    }
+
     property alias refreshTimer: refreshTimer
     Timer {
         id: refreshTimer
@@ -277,5 +300,6 @@ Item {
         initAutoDelete.running = false
         initPaste.running = false
         initPauseState.running = false
+        initImageViewer.running = false
     }
 }

@@ -26,6 +26,7 @@ Rectangle {
     signal pinToggled(bool value)
     signal deleteRequested()
     signal copyRequested()
+    signal imagePreviewRequested(string filepath)
 
     property bool expanded: false
     property bool isCurrent: false
@@ -122,6 +123,44 @@ Rectangle {
                     source: rootItem.type === "image" ? "file://" + rootItem.content : ""
                     fillMode: Image.PreserveAspectFit
                     horizontalAlignment: Image.AlignLeft
+                    
+                    // Optimization: Tell QML to downscale the image to a thumbnail size
+                    // while loading rather than reading the full 4k resolution into RAM.
+                    sourceSize.width: 400
+                    sourceSize.height: 400
+                    
+                    // Optimization: Load the image on a background thread so the UI
+                    // doesn't freeze or stutter while decoding the file disk.
+                    asynchronous: true
+
+                    // Hover overlay to preview
+                    Rectangle {
+                        anchors.centerIn: parent
+                        width: 32; height: 32
+                        radius: 16
+                        color: rootItem.cardColor
+                        opacity: imgHoverArea.containsMouse ? 0.9 : 0.0
+                        border.color: rootItem.isDarkTheme ? "#444" : "#ccc"
+                        border.width: 1
+                        visible: rootItem.type === "image"
+                        
+                        Behavior on opacity { NumberAnimation { duration: 150 } }
+
+                        Text {
+                            anchors.centerIn: parent
+                            text: "👁" // Eye icon
+                            font.pixelSize: 16
+                            color: rootItem.fgColor
+                        }
+
+                        MouseArea {
+                            id: imgHoverArea
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: rootItem.imagePreviewRequested(rootItem.content)
+                        }
+                    }
                 }
 
                 // Text preview
@@ -175,10 +214,12 @@ Rectangle {
                     
                     isPinned: rootItem.isPinned
                     isUrl: rootItem.isUrl
+                    isImage: rootItem.type === "image"
                     itemContent: rootItem.content
                     
                     onPinToggled: (val) => rootItem.pinToggled(val)
                     onDeleteRequested: rootItem.deleteRequested()
+                    onImagePreviewRequested: (filepath) => rootItem.imagePreviewRequested(filepath)
                     onOpenUrlRequested: (url) => {
                         openUrlProc.command = ["jcm-daemon", "open-url", url]
                         openUrlProc.running = true

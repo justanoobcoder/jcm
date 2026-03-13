@@ -13,6 +13,7 @@ DATA_DIR = os.path.join(os.getenv("XDG_DATA_HOME", os.path.expanduser("~/.local/
 IMAGE_DIR = os.path.join(CACHE_DIR, "images")
 DB_PATH = os.path.join(DATA_DIR, "history.db")
 LOG_FILE = os.path.join(CACHE_DIR, "daemon.log")
+JSON_CONFIG_PATH = os.path.expanduser("~/.config/jcm/settings.json")
 
 def log(msg):
     with open(LOG_FILE, "a") as f:
@@ -49,6 +50,34 @@ def set_setting(key, value):
     c.execute("INSERT OR REPLACE INTO settings(key, value) VALUES (?, ?)", (key, value))
     conn.commit()
     conn.close()
+
+def get_json_setting(key, default):
+    if not os.path.exists(JSON_CONFIG_PATH):
+        return default
+    try:
+        with open(JSON_CONFIG_PATH, "r") as f:
+            data = json.load(f)
+            return data.get(key, default)
+    except Exception as e:
+        log(f"Error reading JSON config: {e}")
+        return default
+
+def set_json_setting(key, value):
+    data = {}
+    if os.path.exists(JSON_CONFIG_PATH):
+        try:
+            with open(JSON_CONFIG_PATH, "r") as f:
+                data = json.load(f)
+        except Exception:
+            pass
+            
+    data[key] = value
+    os.makedirs(os.path.dirname(JSON_CONFIG_PATH), exist_ok=True)
+    try:
+        with open(JSON_CONFIG_PATH, "w") as f:
+            json.dump(data, f, indent=4)
+    except Exception as e:
+        log(f"Error writing JSON config: {e}")
 
 def watch():
     init_db()
@@ -245,6 +274,19 @@ def open_url(url):
     log(f"Opening URL: {url}")
     subprocess.Popen(['xdg-open', url])
 
+def open_image(filepath):
+    viewer = get_json_setting("image_viewer", "xdg-open")
+    log(f"Opening image: {filepath} with {viewer}")
+    # Split the command into arguments (e.g., "imv -f" -> ["imv", "-f"])
+    import shlex
+    cmd = shlex.split(viewer)
+    cmd.append(filepath)
+    try:
+        # Fully detach the viewer process so Quickshell doesn't kill it when this short-lived daemon script returns
+        subprocess.Popen(cmd, start_new_session=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, stdin=subprocess.DEVNULL)
+    except Exception as e:
+        log(f"Error opening image with {viewer}: {e}")
+
 def main():
     parser = argparse.ArgumentParser(description="JCM Backend Daemon")
     subparsers = parser.add_subparsers(dest="command")
@@ -275,6 +317,9 @@ def main():
     open_parser = subparsers.add_parser("open-url")
     open_parser.add_argument("url")
     
+    img_parser = subparsers.add_parser("open-image")
+    img_parser.add_argument("filepath")
+    
     cfg_sub = cfg_parser.add_subparsers(dest="cfg_cmd")
     
     c_set = cfg_sub.add_parser("set")
@@ -283,6 +328,13 @@ def main():
     
     c_get = cfg_sub.add_parser("get")
     c_get.add_argument("key")
+    
+    c_setjson = cfg_sub.add_parser("set-json")
+    c_setjson.add_argument("key")
+    c_setjson.add_argument("value")
+    
+    c_getjson = cfg_sub.add_parser("get-json")
+    c_getjson.add_argument("key")
     
     theme_parser = subparsers.add_parser("theme")
     theme_sub = theme_parser.add_subparsers(dest="theme_cmd")
@@ -318,8 +370,14 @@ def main():
             set_setting(args.key, args.value)
         elif args.cfg_cmd == "get":
             print(get_setting(args.key, ""))
+        elif args.cfg_cmd == "set-json":
+            set_json_setting(args.key, args.value)
+        elif args.cfg_cmd == "get-json":
+            print(get_json_setting(args.key, "xdg-open" if args.key == "image_viewer" else ""))
     elif args.command == "open-url":
         open_url(args.url)
+    elif args.command == "open-image":
+        open_image(args.filepath)
     elif args.command == "theme":
         THEMES = {
             "Dark": {

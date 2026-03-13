@@ -18,12 +18,14 @@ Menu {
     
     property bool isPinned: false
     property bool isUrl: false
+    property bool isImage: false
     property string itemContent: ""
 
     // Signals
     signal pinToggled(bool value)
     signal deleteRequested()
     signal openUrlRequested(string url)
+    signal imagePreviewRequested(string filepath)
     
     background: Rectangle {
         implicitWidth: 140
@@ -51,6 +53,31 @@ Menu {
             }
             moreMenu.openUrlRequested(url)
         }
+        contentItem: Text {
+            text: parent.text
+            color: moreMenu.fgColor
+            font.pixelSize: 13
+            leftPadding: 12
+            verticalAlignment: Text.AlignVCenter
+        }
+        background: Rectangle {
+            color: parent.hovered ? moreMenu.cardHover : "transparent"
+            radius: 4
+            anchors.fill: parent
+            anchors.margins: 4
+        }
+        MouseArea {
+            anchors.fill: parent
+            acceptedButtons: Qt.NoButton
+            cursorShape: Qt.PointingHandCursor
+        }
+    }
+
+    MenuItem {
+        text: "Preview Image"
+        visible: moreMenu.isImage
+        height: visible ? 36 : 0
+        onTriggered: moreMenu.imagePreviewRequested(moreMenu.itemContent)
         contentItem: Text {
             text: parent.text
             color: moreMenu.fgColor
