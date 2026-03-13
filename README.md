@@ -16,7 +16,8 @@ A modern, aesthetic, and lightweight clipboard manager for **Wayland**, built wi
   - **Colors**: Automatically detects Hex and RGB/RGBA codes and shows a live preview box.
   - **Links**: Detects URLs and provides an "Open in Browser" action directly.
 - **Vim-like Navigation**: Fast, keyboard-driven history management.
-- **Image Support**: Captures and previews images with aspect-ratio awareness.
+- **Image Support**: Captures and previews images with aspect-ratio awareness. You can trigger full-size views through an external viewer.
+- **Inline Text Editing**: Edit, tweak, or redact any text snippet directly in the UI before copying it.
 - **Persistence**: Powered by SQLite for reliable history storage.
 - **Filtering & Search**: Quickly find clips by text content or category (All, Text, Image, Color, Link).
 - **Pause/Resume**: Instantly pause the daemon from recording new clipboard items to prevent sensitive data from entering your history.
@@ -112,6 +113,7 @@ Toggle these via the gear icon in the app:
 - **Theme**: Swap between beautiful built-in defaults or select a dynamically loaded custom theme.
 - **Auto Delete**: Automatically clear unpinned history on reboot.
 - **Paste Right Away**: Instantly paste clips into your active window when selected.
+- **Image Viewer Command**: Configure what external program (e.g., `feh`, `imv`, `loupe`) is used to open full-size images from JCM. (Saved independently to `~/.config/jcm/settings.json`)
 
 ### Custom Themes
 You can load your own custom color palettes! To get started, automatically generate an example configuration file by running:
