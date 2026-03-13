@@ -27,6 +27,7 @@ ShellRoot {
 
     FloatingWindow {
         id: mainWindow
+        title: "jcm"
         implicitWidth: Math.min(440, Screen.desktopAvailableWidth * 0.9)
         implicitHeight: Math.min(700, Screen.desktopAvailableHeight * 0.9)
         visible: true
