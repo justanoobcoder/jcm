@@ -11,6 +11,7 @@ Rectangle {
     property bool isDarkTheme: themeName !== "Light"
     property bool isAutoDelete: false
     property bool isPasteRightAway: false
+    property string imageViewerCmd: "xdg-open"
     
     property color fgColor: "white"
     property color bgColor: "#1a1b26"
@@ -19,6 +20,7 @@ Rectangle {
     signal themeChanged(string value)
     signal autoDeleteToggled(bool value)
     signal pasteRightAwayToggled(bool value)
+    signal viewerCmdChanged(string value)
     signal clearHistoryRequested()
     signal closeRequested()
 
@@ -199,6 +201,26 @@ Rectangle {
                         Behavior on x { NumberAnimation { duration: 100 } }
                     }
                 }
+            }
+        }
+
+        RowLayout {
+            Layout.fillWidth: true
+            Text { text: "Image Viewer Command"; color: fgColor; font.pixelSize: 16; Layout.fillWidth: true }
+            TextField {
+                text: drawerRoot.imageViewerCmd
+                color: drawerRoot.fgColor
+                Layout.preferredWidth: 160
+                Layout.preferredHeight: 32
+                font.pixelSize: 13
+                leftPadding: 12
+                background: Rectangle {
+                    color: parent.activeFocus ? (drawerRoot.isDarkTheme ? "#2a2d3e" : "#fff") : (drawerRoot.isDarkTheme ? "#222" : "#f5f5f5")
+                    radius: 6
+                    border.color: parent.activeFocus ? drawerRoot.accentColor : (drawerRoot.isDarkTheme ? "#444" : "#ccc")
+                    border.width: 1
+                }
+                onEditingFinished: drawerRoot.viewerCmdChanged(text)
             }
         }
 

@@ -169,6 +169,12 @@ ShellRoot {
                         onCopyRequested: {
                             backend.copyItem(model.id)
                         }
+                        onImagePreviewRequested: (filepath) => {
+                            backend.openImage(filepath)
+                        }
+                        onEditItemRequested: (newContent) => {
+                            backend.editItem(model.id, newContent)
+                        }
                     }
 
                     ScrollBar.vertical: ScrollBar {
@@ -183,6 +189,7 @@ ShellRoot {
                 themeList: backend.themeList
                 isAutoDelete: backend.isAutoDelete
                 isPasteRightAway: backend.isPasteRightAway
+                imageViewerCmd: backend.imageViewerCmd
                 fgColor: mainWindow.fgColor
                 bgColor: mainWindow.cardColor
                 accentColor: mainWindow.accentColor
@@ -190,6 +197,7 @@ ShellRoot {
                 onThemeChanged: val => { backend.setTheme(val) }
                 onAutoDeleteToggled: val => { backend.setAutoDelete(val) }
                 onPasteRightAwayToggled: val => { backend.setPasteRightAway(val) }
+                onViewerCmdChanged: val => { backend.setImageViewerCmd(val) }
                 onClearHistoryRequested: {
                     backend.clearHistory()
                     visible = false
