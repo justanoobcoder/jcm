@@ -11,13 +11,13 @@
 }:
 stdenv.mkDerivation rec {
   pname = "jcm";
-  version = "2.0";
+  version = "2.0.1";
 
   src = fetchFromGitHub {
     owner = "justanoobcoder";
     repo = "jcm";
     rev = "v${version}";
-    hash = "sha256-H5S4bZn9ivhuQS8LIyh16RTcfKhBhURiSIRMth0m6BU=";
+    hash = "sha256-wCrb1kl9YHkBZI90TGewHhY4t7OCF+65W4AaPRXzLwQ=";
   };
 
   nativeBuildInputs = [makeWrapper];
